@@ -79,7 +79,7 @@ def main():
         # Save frame
         filename = f"{save_dir}/frame_{frame_count:06d}.png"
         cv2.imwrite(filename, result)
-        print("Saved:", filename)
+        #print("Saved:", filename)
 
         prev_result = result.copy()
         frame_count += 1

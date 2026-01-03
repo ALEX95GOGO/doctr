@@ -17,7 +17,7 @@ IMAGE_FILE_EXTENSIONS = [".jpeg", ".jpg", ".png", ".tif", ".tiff", ".bmp"]
 OTHER_EXTENSIONS = [".pdf"]
 
 
-def _process_file(model, file_path: Path, out_format: str) -> None:
+def _process_file(model, file_path: Path, out_format: str, outdir: str) -> None:
     if out_format not in ["txt", "json", "xml"]:
         raise ValueError(f"Unsupported output format: {out_format}")
 
@@ -37,7 +37,8 @@ def _process_file(model, file_path: Path, out_format: str) -> None:
     elif out_format == "xml":
         output = out.export_as_xml()
 
-    path = Path("output").joinpath(file_path.stem + "." + out_format)
+    #path = Path("output").joinpath(file_path.stem + "." + out_format)
+    path = Path(outdir).joinpath(file_path.stem + "." + out_format)
     if out_format == "xml":
         for i, (xml_bytes, xml_tree) in enumerate(output):
             path = Path("output").joinpath(file_path.stem + f"_{i}." + out_format)
@@ -52,20 +53,20 @@ def main(args):
         pretrained=True,
         bin_thresh=args.bin_thresh,
         box_thresh=args.box_thresh,
-    )
-    model = ocr_predictor(detection_model, args.recognition, pretrained=True)
+    ).cuda()
+    model = ocr_predictor(detection_model, args.recognition, pretrained=True).cuda()
     path = Path(args.path)
 
-    os.makedirs(name="output", exist_ok=True)
+    os.makedirs(name=args.outdir, exist_ok=True)
 
     if path.is_dir():
         to_process = [
             f for f in path.iterdir() if str(f).lower().endswith(tuple(IMAGE_FILE_EXTENSIONS + OTHER_EXTENSIONS))
         ]
         for file_path in tqdm(to_process):
-            _process_file(model, file_path, args.format)
+            _process_file(model, file_path, args.format, args.outdir)
     else:
-        _process_file(model, path, args.format)
+        _process_file(model, path, args.format,args.outdir)
 
 
 def parse_args():
@@ -81,6 +82,8 @@ def parse_args():
         "--recognition", type=str, default="crnn_vgg16_bn", help="Text recognition model to use for analysis"
     )
     parser.add_argument("-f", "--format", choices=["txt", "json", "xml"], default="txt", help="Output format")
+    parser.add_argument("--outdir", type=str, help="Path to process: PDF, image, directory")
+
     return parser.parse_args()
 
 

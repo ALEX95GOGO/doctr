@@ -140,6 +140,7 @@ def merge_json_to_csv(input_path: Path, output_csv: Path):
                     continue
 
             for row in iter_words_from_doc(doc, source_name=json_path.name):
+                print(row)
                 writer.writerow(row)
 
     print(f"Wrote CSV: {output_csv} (from {len(json_files)} JSON files)")
