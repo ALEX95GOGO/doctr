@@ -19,7 +19,7 @@ def sentence_similarity(a: str, b: str) -> float:
 
 def load_master_sentences(master_csv: Path, col: str) -> List[str]:
     """Load master/ground-truth sentences from a CSV column. De-dupes while preserving order."""
-    with master_csv.open("r", encoding="utf-8") as f:
+    with master_csv.open("r", encoding='utf-8-sig') as f:
         reader = csv.DictReader(f)
         if not reader.fieldnames or col not in reader.fieldnames:
             raise ValueError(f"Master CSV must contain column '{col}'. Found: {reader.fieldnames}")
@@ -407,7 +407,7 @@ def parse_args():
     parser.add_argument(
         "--master-col",
         type=str,
-        default="\ufeffSubtitles",
+        default= "Subtitles", #"\ufeffSubtitles",
         help="Column in master CSV that contains ground-truth sentences.",
     )
 
