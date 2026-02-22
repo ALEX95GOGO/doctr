@@ -9,11 +9,11 @@ echo
 #export HF_HOME="${WORKDIR}/hfcache/"
 
 # ---- Run ----
-for i in {1..5}; do
+for i in {1..42}; do
   cd "$WORKDIR"
   cd doctr
 
-  FILE_NAME=$(printf "A%03d.mp4" "$i")
+  FILE_NAME=$(printf "B%03d.mp4" "$i")
   BASE_NAME="${FILE_NAME%.*}"
 
   echo "=== Processing $FILE_NAME ==="
